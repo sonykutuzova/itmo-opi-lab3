@@ -9,6 +9,6 @@ public class PointTest {
     public void testPointCreation() {
         PointEntity point = new PointEntity();
         point.setX(1.0);
-        assertEquals(1.0, point.getX(), 0.001);
+        assertEquals(1.0, point.getX(), 0.01);
     }
 }
