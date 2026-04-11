@@ -170,16 +170,92 @@
     </target>
 
     <!-- 13. Цель ALT: альтернативная сборка с заменой текста -->
-    <target name="alt" depends="clean" description="Сборка с заменой имен">
-        <copy todir="${alt.src.dir}"><fileset dir="${src.dir}"/></copy>
-        <!-- Меняем PointEntity на SuperPoint во всех файлах новой папки -->
-        <replace dir="${alt.src.dir}" token="PointEntity" value="SuperPoint"/>
+    <target name="alt" depends="clean">
+        <mkdir dir="build/alt-src"/>
+        <copy todir="build/alt-src"><fileset dir="${src.dir}"/></copy>
 
-        <mkdir dir="${alt.classes.dir}"/>
-        <javac srcdir="${alt.src.dir}" destdir="${alt.classes.dir}" includeantruntime="false">
+        <!-- Заменим какое-нибудь строковое значение или переменную, но не имя класса -->
+        <replace dir="build/alt-src" token="results" value="SUPER_RESULTS"/>
+
+        <mkdir dir="build/alt-classes"/>
+        <javac srcdir="build/alt-src" destdir="build/alt-classes" includeantruntime="false">
             <classpath refid="classpath.lib"/>
         </javac>
-        <jar destfile="${dist.dir}/alt-project.jar" basedir="${alt.classes.dir}"/>
-        <echo message="Альтернативный JAR собран в dist/alt-project.jar"/>
+        <jar destfile="dist/alt-project.jar" basedir="build/alt-classes"/>
+    </target>
+
+    <!-- 12. Цель ENV: Запуск с параметрами JVM -->
+    <target name="env" depends="build" description="Запуск в альтернативном окружении">
+        <echo message="Запуск приложения с лимитом памяти 512MB..."/>
+        <java jar="dist/${jar.name}" fork="true">
+            <!-- Аргументы виртуальной машины -->
+            <jvmarg value="-Xmx512m"/>
+            <jvmarg value="-Dfile.encoding=UTF-8"/>
+            <jvmarg value="-Duser.language=en"/>
+        </java>
+    </target>
+
+    <!-- 7. Цель SCP: Отправка на сервер по SSH -->
+    <target name="scp" depends="build" description="Копирование на сервер">
+        <echo message="Отправка файла ${dist.dir}/${jar.name} на ${scp.host}..."/>
+        <scp file="${dist.dir}/${jar.name}"
+             todir="${scp.user}:${scp.password}@${scp.host}:${scp.dir}"
+             port="${scp.port}"
+             trust="true"
+             failonerror="true"
+             verbose="true"/>
+        <echo message="Файл успешно доставлен!"/>
+    </target>
+
+    <target name="music" depends="build" description="Поиграть музыку при успехе">
+        <sound>
+            <success source="${music.file}"/>
+        </sound>
+        <echo message="Сборка завершена, музыка должна играть!"/>
+    </target>
+    <!-- 14. Цель HISTORY -->
+    <target name="history" description="Авто-откат до рабочей версии в Git">
+        <echo message="Запуск поиска стабильной версии..."/>
+        <antcall target="-check-and-rollback"/>
+    </target>
+
+    <target name="-check-and-rollback">
+        <!-- 1. Пытаемся скомпилировать.
+             Запускаем через exec, чтобы Ant не "умирал" при ошибке -->
+        <exec executable="ant.bat" resultproperty="compile.result">
+            <arg value="compile"/>
+        </exec>
+
+        <condition property="compile.worked">
+            <equals arg1="${compile.result}" arg2="0"/>
+        </condition>
+
+        <!-- 2. Если скомпилировалось - переходим к завершению -->
+        <antcall target="-history-success"/>
+
+        <!-- 3. Если НЕ скомпилировалось - откатываемся и пробуем снова -->
+        <antcall target="-history-fail"/>
+    </target>
+
+    <target name="-history-success" if="compile.worked">
+        <echo message="---------------------------------------"/>
+        <echo message="УРА! Найдена рабочая версия проекта."/>
+        <!-- Создаем файл с разницей (diff) между тем, что было и что стало -->
+        <exec executable="git" output="build/history_diff.txt">
+            <arg value="diff"/>
+            <arg value="HEAD..HEAD@{1}"/>
+        </exec>
+        <echo message="Отчет об изменениях сохранен в build/history_diff.txt"/>
+        <echo message="---------------------------------------"/>
+    </target>
+
+    <target name="-history-fail" unless="compile.worked">
+        <echo message="Версия не собирается. Откатываемся на один коммит назад..."/>
+        <exec executable="git" failonerror="true">
+            <arg value="checkout"/>
+            <arg value="HEAD~1"/>
+        </exec>
+        <!-- Рекурсивный вызов самого себя, чтобы проверить новую версию -->
+        <antcall target="-check-and-rollback"/>
     </target>
 </project>
