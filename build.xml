@@ -214,48 +214,34 @@
         <echo message="Сборка завершена, музыка должна играть!"/>
     </target>
     <!-- 14. Цель HISTORY -->
-    <target name="history" description="Авто-откат до рабочей версии в Git">
-        <echo message="Запуск поиска стабильной версии..."/>
-        <antcall target="-check-and-rollback"/>
-    </target>
-
-    <target name="-check-and-rollback">
-        <!-- 1. Пытаемся скомпилировать.
-             Запускаем через exec, чтобы Ant не "умирал" при ошибке -->
-        <exec executable="ant.bat" resultproperty="compile.result">
+    <!-- 14. Цель HISTORY (Бронебойная версия) -->
+    <target name="history" description="Откат до рабочей версии">
+        <!-- 1. Пробуем скомпилировать -->
+        <exec executable="ant.bat" resultproperty="res">
             <arg value="compile"/>
         </exec>
 
-        <condition property="compile.worked">
-            <equals arg1="${compile.result}" arg2="0"/>
+        <condition property="is.ok">
+            <equals arg1="${res}" arg2="0"/>
         </condition>
 
-        <!-- 2. Если скомпилировалось - переходим к завершению -->
-        <antcall target="-history-success"/>
-
-        <!-- 3. Если НЕ скомпилировалось - откатываемся и пробуем снова -->
-        <antcall target="-history-fail"/>
+        <!-- 2. Если всё ок - финиш -->
+        <antcall target="-history-win"/>
+        <!-- 3. Если нет - откат -->
+        <antcall target="-history-retry"/>
     </target>
 
-    <target name="-history-success" if="compile.worked">
-        <echo message="---------------------------------------"/>
-        <echo message="УРА! Найдена рабочая версия проекта."/>
-        <!-- Создаем файл с разницей (diff) между тем, что было и что стало -->
-        <exec executable="git" output="build/history_diff.txt">
-            <arg value="diff"/>
-            <arg value="HEAD..HEAD@{1}"/>
-        </exec>
-        <echo message="Отчет об изменениях сохранен в build/history_diff.txt"/>
-        <echo message="---------------------------------------"/>
+    <target name="-history-win" if="is.ok">
+        <echo message="ПОБЕДА! Рабочая версия найдена."/>
     </target>
 
-    <target name="-history-fail" unless="compile.worked">
-        <echo message="Версия не собирается. Откатываемся на один коммит назад..."/>
+    <target name="-history-retry" unless="is.ok">
+        <echo message="Код сломан. Откатываемся..."/>
         <exec executable="git" failonerror="true">
             <arg value="checkout"/>
             <arg value="HEAD~1"/>
         </exec>
-        <!-- Рекурсивный вызов самого себя, чтобы проверить новую версию -->
-        <antcall target="-check-and-rollback"/>
+        <!-- ВНИМАНИЕ: вызываем саму цель history, она точно есть в старых файлах -->
+        <antcall target="history"/>
     </target>
 </project>
