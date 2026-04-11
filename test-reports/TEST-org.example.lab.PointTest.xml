@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="DESKTOP-0MFE913" name="org.example.lab.PointTest" skipped="0" tests="1" time="0.12" timestamp="2026-04-11T08:43:06">
+<testsuite errors="0" failures="0" hostname="DESKTOP-0MFE913" name="org.example.lab.PointTest" skipped="0" tests="1" time="0.116" timestamp="2026-04-11T08:49:15">
   <properties>
     <property name="ant.library.dir" value="C:\Users\Sonya\Documents\opi\apache-ant-1.10.16\lib" />
     <property name="ant.file.type" value="file" />
@@ -20,9 +20,10 @@
     <property name="sun.java.launcher" value="SUN_STANDARD" />
     <property name="user.country" value="RU" />
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-22\bin" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner org.example.lab.PointTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Users\Sonya\Documents\opi\lab3\test-reports\TEST-org.example.lab.PointTest.xml crashfile=C:\Users\Sonya\Documents\opi\lab3\junitvmwatcher15535114483212383542.properties propsfile=C:\Users\Sonya\Documents\opi\lab3\junit10064031045822611696.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner org.example.lab.PointTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Users\Sonya\Documents\opi\lab3\test-reports\TEST-org.example.lab.PointTest.xml crashfile=C:\Users\Sonya\Documents\opi\lab3\junitvmwatcher1154441797971804548.properties propsfile=C:\Users\Sonya\Documents\opi\lab3\junit10022826974412953113.properties" />
     <property name="jdk.debug" value="release" />
     <property name="main.class" value="org.example.lab.Main" />
+    <property name="alt.src.dir" value="build/alt-src" />
     <property name="sun.cpu.endian" value="little" />
     <property name="user.home" value="C:\Users\Sonya" />
     <property name="user.language" value="ru" />
@@ -33,8 +34,10 @@
     <property name="version" value="1.0" />
     <property name="basedir" value="C:\Users\Sonya\Documents\opi\lab3" />
     <property name="file.separator" value="\" />
+    <property name="javadoc.dir" value="build/javadoc" />
     <property name="java.vm.compressedOopsMode" value="Zero based" />
     <property name="line.separator" value="&#xd;&#xa;" />
+    <property name="alt.classes.dir" value="build/alt-classes" />
     <property name="ant.java.version" value="22" />
     <property name="java.specification.name" value="Java Platform API Specification" />
     <property name="java.vm.specification.vendor" value="Oracle Corporation" />
@@ -60,6 +63,7 @@
     <property name="java.io.tmpdir" value="C:\Users\Sonya\AppData\Local\Temp\" />
     <property name="java.version" value="22.0.2" />
     <property name="user.dir" value="C:\Users\Sonya\Documents\opi\lab3" />
+    <property name="diff.target.classes" value="PointBean,ResultsBean" />
     <property name="os.arch" value="amd64" />
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
     <property name="ant.home" value="C:\Users\Sonya\Documents\opi\apache-ant-1.10.16\bin\.." />
@@ -78,7 +82,7 @@
     <property name="src.dir" value="src/main/java" />
     <property name="ant.project.default-target" value="compile" />
   </properties>
-  <testcase classname="org.example.lab.PointTest" name="testPointCreation" time="0.005" />
+  <testcase classname="org.example.lab.PointTest" name="testPointCreation" time="0.004" />
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
