@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Lab3" default="compile" basedir=".">
+    <property file="build.properties"/>
+
+    <!-- Определяем, где лежат библиотеки -->
+    <path id="classpath.lib">
+        <fileset dir="lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="compile" depends="clean">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}"
+               destdir="${classes.dir}"
+               includeantruntime="false"
+               encoding="UTF-8">
+            <!-- Подключаем наши библиотеки к компилятору -->
+            <classpath refid="classpath.lib"/>
+        </javac>
+
+        <!-- Копируем ресурсы (persistence.xml и другие настройки) -->
+        <copy todir="${classes.dir}">
+            <fileset dir="${resources.dir}" erroronmissingdir="false"/>
+        </copy>
+    </target>
+    <!-- 2. Цель BUILD: упаковка в JAR -->
+    <target name="build" depends="compile" description="Компиляция и упаковка в JAR">
+        <!-- Создаем папку для готового архива, если её нет -->
+        <mkdir dir="${dist.dir}"/>
+
+        <jar destfile="${dist.dir}/${jar.name}" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Manifest-Version" value="${version}"/>
+                <attribute name="Main-Class" value="${main.class}"/>
+                <!-- Хорошим тоном считается добавить инфо, кто собрал -->
+                <attribute name="Created-By" value="Sonya"/>
+            </manifest>
+        </jar>
+        <echo message="Сборка архива завершена: ${dist.dir}/${jar.name}"/>
+    </target>
+
+    <!-- Компиляция тестов -->
+    <target name="compile-tests" depends="build">
+        <mkdir dir="${test.build.dir}"/>
+        <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" includeantruntime="false" encoding="UTF-8">
+            <classpath>
+                <path refid="classpath.lib"/>
+                <pathelement location="${classes.dir}"/> <!-- Чтобы тесты видели основные классы -->
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- 4. Цель TEST: запуск JUnit тестов -->
+    <target name="test" depends="compile-tests" description="Запуск тестов">
+        <mkdir dir="${test.report.dir}"/>
+        <junit printsummary="yes" haltonfailure="no">
+            <classpath>
+                <path refid="classpath.lib"/>
+                <pathelement location="${classes.dir}"/>
+                <pathelement location="${test.build.dir}"/>
+            </classpath>
+
+            <!-- Формат отчета (нужен для пункта №10) -->
+            <formatter type="xml"/>
+
+            <batchtest fork="yes" todir="${test.report.dir}">
+                <fileset dir="${test.src.dir}">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <echo message="Тесты завершены. Отчеты в ${test.report.dir}"/>
+    </target>
+
+    <!-- 6. Цель XML: Валидация всех xml-файлов в проекте -->
+    <target name="xml" description="Валидация всех XML-файлов">
+        <xmlvalidate lenient="true">
+            <fileset dir="." includes="**/*.xml" excludes="build/**, target/**, .idea/**"/>
+        </xmlvalidate>
+        <echo message="Все XML-файлы прошли валидацию."/>
+    </target>
+
+    <!-- 5. Цель NATIVE2ASCII: Преобразование файлов локализации -->
+    <target name="native2ascii" description="Преобразование локализации">
+        <native2ascii src="${resources.dir}"
+                      dest="${classes.dir}"
+                      includes="**/*.properties"
+                      encoding="UTF-8"/>
+        <echo message="Локализация обработана."/>
+    </target>
+
+    <!-- 10. Цель REPORT: если тесты ок, добавляем отчет в git и коммитим -->
+    <target name="report" depends="test" description="Отправка отчета в Git">
+        <exec executable="git">
+            <arg value="add"/>
+            <arg value="${test.report.dir}"/>
+        </exec>
+        <exec executable="git">
+            <arg value="commit"/>
+            <arg value="-m"/>
+            <arg value="Add junit test report [auto-generated]"/>
+        </exec>
+        <echo message="Отчет закоммичен в Git."/>
+    </target>
+</project>

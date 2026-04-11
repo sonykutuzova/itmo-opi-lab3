@@ -1,0 +1,94 @@
+body, html {
+  background: #47002C;
+  color: #FFE4F5;
+  text-align: center;
+  font-size: 16px;
+  font-family: 'Orbitron', sans-serif;
+
+}
+.main-container{
+  position:absolute;
+  top:100px;
+  left:30%;
+  width:40%;
+  margin:auto;
+  border-radius: 20px;
+}
+.header {
+  border-radius: 20px;
+
+    font-family: fantasy;
+    font-size: 28px;
+    padding: 25px;
+    background: linear-gradient(135deg, #9d748a 0%, #a02964 50%, #320116 100%);
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s ease;
+}
+
+
+
+h1 {
+  visibility: hidden;
+}
+.container {
+  display: block;
+  margin: 1em auto;
+}
+
+.nav-link {
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #8b657a 0%, #93225a 50%, #5b1032 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    display: inline-flex;
+  text-decoration:none;
+
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease !important;
+
+}
+
+
+a:hover {
+    transform: translateY(0) scale(1.2);
+
+}
+
+#time {
+  font-size: 5em;
+  margin: 3em 0 .5em;
+}
+
+#date {
+  font-size: 2em;
+  margin-bottom: 1em;
+}
+ul {
+  font-size: 1.5em;
+  color: #970b63;
+}
+ul li{
+  margin: 1em;
+  display: inline-block;
+}
+.glow {
+  color: #b29ba9;
+  text-align: center;
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #FFE4F5, 0 0 30px #FF66C6, 0 0 40px #47002c, 0 0 50px #9b0765, 0 0 60px #a1638b, 0 0 70px #9d0d43;
+  }
+
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #790744, 0 0 40px #a9417b, 0 0 50px #ab6b8d, 0 0 60px #d44e9d, 0 0 70px #b2156e, 0 0 80px #47002c;
+  }
+}
