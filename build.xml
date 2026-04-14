@@ -219,14 +219,42 @@
     </target>-->
 
 
-    <!-- 14. Цель HISTORY (Версия без комментариев, чтобы не ломать парсер) -->
-    <target name="history" description="Линейный откат до рабочей версии">
+
+    <target name="history" >
         <mkdir dir="build"/>
-        <echo message="Запуск автоматического поиска рабочей ревизии..."/>
+
         <exec executable="powershell" failonerror="true">
             <arg value="-NoProfile"/>
             <arg value="-Command"/>
-            <arg value="&amp; { $start = git rev-parse HEAD; do { Write-Host '--- Checking:' (git rev-parse --short HEAD) ' ---'; ant.bat compile; if ($LASTEXITCODE -eq 0) { Write-Host '✅ SUCCESS! Working version found.'; git diff HEAD HEAD@{1} > build/history_diff.txt; Write-Host 'Diff report saved to build/history_diff.txt'; break }; Write-Host '❌ FAILED. Rolling back...'; git checkout -f HEAD~1; if ($LASTEXITCODE -ne 0) { Write-Host '🛑 Reached start of history.'; break } } while ($true) }"/>
+            <arg value="&lt;![CDATA[
+                $startCommit = git rev-parse HEAD
+
+                while ($true) {
+                    $currentSHA = git rev-parse --short HEAD
+                    Write-Host '--- Проверка коммита: '$currentSHA' ---' -ForegroundColor Cyan
+
+                    cmd /c ant compile
+
+                    if ($LASTEXITCODE -eq 0) {
+                        Write-Host '✅ УСПЕХ! Рабочая версия найдена.' -ForegroundColor Green
+
+
+                        git diff $startCommit HEAD > build/history_diff.txt
+
+                        Write-Host 'Отчет об исправлениях сохранен в build/history_diff.txt'
+                        break
+                    } else {
+                        Write-Host '❌ ОШИБКА. Откатываемся назад...' -ForegroundColor Yellow
+
+                        git checkout -f HEAD~1
+
+                        if ($LASTEXITCODE -ne 0) {
+                            Write-Host '🛑 Достигнуто начало истории, рабочих версий нет.' -ForegroundColor Red
+                            break
+                        }
+                    }
+                }
+            ]]&gt;"/>
         </exec>
     </target>
 </project>
