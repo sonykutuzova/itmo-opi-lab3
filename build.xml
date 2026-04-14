@@ -219,27 +219,34 @@
     </target>-->
 
 
-    <target name="history">
-        <exec executable="ant.bat" failonerror="false" resultproperty="res">
-            <arg value="compile"/>
+    <!-- 14. Цель HISTORY (Сверхстабильная версия через PowerShell) -->
+    <target name="history" description="Линейный откат до рабочей версии">
+        <echo message="Запуск автоматического поиска рабочей ревизии..."/>
+
+        <exec executable="powershell">
+            <arg line="-Command"/>
+            <arg value="
+                $start_commit = git rev-parse HEAD;
+                $found = $false;
+                while (-not $found) {
+                    Write-Host '--- Проверяем коммит: ' (git rev-parse --short HEAD) ' ---';
+                    # Запускаем компиляцию
+                    ant compile;
+                    if ($LASTEXITCODE -eq 0) {
+                        Write-Host '✅ ПОБЕДА! Рабочая версия найдена.';
+                        $found = $true;
+                        # Создаем файл с разницей (diff)
+                        git diff $start_commit HEAD > build/history_diff.txt;
+                        break;
+                    }
+                    Write-Host '❌ Код сломан. Прыгаем назад...';
+                    git checkout -f HEAD~1;
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Host '🛑 Дошли до начала истории или ошибка гита.';
+                        break;
+                    }
+                }
+            "/>
         </exec>
-
-        <condition property="build.failed">
-            <not>
-                <equals arg1="${res}" arg2="0"/>
-            </not>
-        </condition>
-
-        <antcall target="-history-retry"/>
-    </target>
-
-
-    <target name="-history-retry" if="build.failed">
-        <echo message="откат"/>
-        <exec executable="git" failonerror="true">
-            <arg value="checkout"/>
-            <arg value="HEAD~1"/>
-        </exec>
-        <antcall target="history"/>
     </target>
 </project>
