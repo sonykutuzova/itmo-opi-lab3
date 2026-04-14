@@ -219,46 +219,27 @@
     </target>-->
 
 
-    <!-- 14. Цель HISTORY -->
-    <target name="history" description="Откат до рабочей версии">
-        <!-- Очищаем переменные для текущего круга -->
-        <local name="compile.code"/>
-        <local name="success"/>
-
-        <echo message="Проверяем текущую версию..."/>
-
-        <!-- Пытаемся скомпилировать -->
-        <exec executable="cmd" resultproperty="compile.code">
-            <arg value="/c"/>
-            <arg value="ant compile"/>
+    <target name="history">
+        <exec executable="ant.bat" failonerror="false" resultproperty="res">
+            <arg value="compile"/>
         </exec>
 
-        <!-- Проверяем результат: 0 - успех, остальное - провал -->
-        <condition property="success">
-            <equals arg1="${compile.code}" arg2="0"/>
+        <condition property="build.failed">
+            <not>
+                <equals arg1="${res}" arg2="0"/>
+            </not>
         </condition>
 
-        <!-- Вызываем либо победу, либо новый откат -->
-        <antcall target="-finish-history"/>
-        <antcall target="-step-back-history"/>
+        <antcall target="-history-retry"/>
     </target>
 
-    <!-- Если успех найден - останавливаемся -->
-    <target name="-finish-history" if="success">
-        <echo message="*******************************************"/>
-        <echo message="ПОБЕДА! Рабочая версия найдена и собрана!"/>
-        <echo message="*******************************************"/>
-    </target>
 
-    <!-- Если не успех - прыгаем назад -->
-    <target name="-step-back-history" unless="success">
-        <echo message="Код не компилируется. Прыгаем в прошлое на 1 шаг..."/>
+    <target name="-history-retry" if="build.failed">
+        <echo message="откат"/>
         <exec executable="git" failonerror="true">
             <arg value="checkout"/>
-            <arg value="-f"/>
             <arg value="HEAD~1"/>
         </exec>
-        <!-- Рекурсия: запуск проверки заново -->
         <antcall target="history"/>
     </target>
 </project>
