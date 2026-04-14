@@ -33,4 +33,4 @@ public class PointBean implements Serializable {
     public double getY() { return y; }
     public void setY(double y) { this.y = y; }
     public double getR() { return r; }
-}//аоаоаооа
+}//аоаоаооаnjnjnjnjknjknjk

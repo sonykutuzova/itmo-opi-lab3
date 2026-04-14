@@ -136,40 +136,34 @@
 
 
 
-    <!-- 8. Цель DOC: Javadoc + контрольные суммы в манифест -->
-    <target name="doc" depends="build" description="Генерация javadoc и хеш-сумм">
+
+    <target name="doc" depends="build">
         <mkdir dir="${javadoc.dir}"/>
         <javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" encoding="UTF-8">
             <classpath refid="classpath.lib"/>
         </javadoc>
 
-        <!-- Считаем хеши для JAR -->
+        <!-- хеши для JAR -->
         <checksum file="${dist.dir}/${jar.name}" property="jar.md5" algorithm="MD5"/>
         <checksum file="${dist.dir}/${jar.name}" property="jar.sha1" algorithm="SHA-1"/>
 
-        <!-- Обновляем манифест в уже собранном JAR -->
         <jar destfile="${dist.dir}/${jar.name}" update="true">
             <manifest>
                 <attribute name="MD5-Digest" value="${jar.md5}"/>
                 <attribute name="SHA-1-Digest" value="${jar.sha1}"/>
             </manifest>
         </jar>
-        <echo message="Документация готова, хеши добавлены в манифест."/>
     </target>
 
 
 
-    <!-- 11. Цель DIFF: коммит, если изменились важные классы -->
-    <target name="diff" description="Авто-коммит важных классов">
+    <target name="diff">
         <exec executable="git" outputproperty="git.status.out">
             <arg value="status"/>
             <arg value="--short"/>
         </exec>
-        <!-- Выведем в консоль, что видит гит, для отладки -->
-        <echo message="Git status: ${git.status.out}"/>
 
         <condition property="beans.changed">
-            <!-- Ищем упоминание классов в выводе git status -->
             <matches string="${git.status.out}" pattern=".*(PointBean|ResultsBean).*"/>
         </condition>
 
@@ -178,15 +172,13 @@
 
     <target name="-do-diff-commit" if="beans.changed">
         <exec executable="git"><arg value="add"/><arg value="."/></exec>
-        <exec executable="git"><arg value="commit"/><arg value="-m"/><arg value="Critical classes modified"/></exec>
-        <echo message="ИЗМЕНЕНИЯ ЗАКОММИЧЕНЫ!"/>
+        <exec executable="git"><arg value="commit"/><arg value="-m"/><arg value="classes modified"/></exec>
     </target>
 
-    <target name="-commit-beans" if="beans.changed">
-        <exec executable="git"><arg value="add"/><arg value="."/></exec>
-        <exec executable="git"><arg value="commit"/><arg value="-m"/><arg value="Critical classes modified"/></exec>
-        <echo message="Изменения в бинах закоммичены."/>
-    </target>
+
+
+
+
 
     <!-- 13. Цель ALT: альтернативная сборка с заменой текста -->
     <target name="alt" depends="clean">
