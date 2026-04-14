@@ -220,6 +220,8 @@
 
 
     <target name="history">
+        <local name="res"/>
+        <local name="is.ok"/>
         <exec executable="ant.bat" resultproperty="res">
             <arg value="compile"/>
         </exec>
