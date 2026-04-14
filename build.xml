@@ -180,13 +180,11 @@
 
 
 
-    <!-- 13. Цель ALT: альтернативная сборка с заменой текста -->
     <target name="alt" depends="clean">
         <mkdir dir="build/alt-src"/>
         <copy todir="build/alt-src"><fileset dir="${src.dir}"/></copy>
 
-        <!-- Заменим какое-нибудь строковое значение или переменную, но не имя класса -->
-        <replace dir="build/alt-src" token="results" value="SUPER_RESULTS"/>
+        <replace dir="build/alt-src" token="rect" value="rerere"/>
 
         <mkdir dir="build/alt-classes"/>
         <javac srcdir="build/alt-src" destdir="build/alt-classes" includeantruntime="false">
@@ -195,18 +193,20 @@
         <jar destfile="dist/alt-project.jar" basedir="build/alt-classes"/>
     </target>
 
-    <!-- 12. Цель ENV: Запуск с параметрами JVM -->
-    <target name="env" depends="build" description="Запуск в альтернативном окружении">
+
+
+
+
+
+    <target name="env" depends="build" >
         <echo message="Запуск приложения с лимитом памяти 512MB..."/>
         <java jar="dist/${jar.name}" fork="true">
-            <!-- Аргументы виртуальной машины -->
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="-Dfile.encoding=UTF-8"/>
             <jvmarg value="-Duser.language=en"/>
         </java>
     </target>
 
-    <!-- 7. Цель SCP: Отправка на сервер по SSH -->
 <!--    <target name="scp" depends="build" description="Копирование на сервер">
         <echo message="Отправка файла ${dist.dir}/${jar.name} на ${scp.host}..."/>
         <scp file="${dist.dir}/${jar.name}"
@@ -219,10 +219,7 @@
     </target>-->
 
 
-    <!-- 14. Цель HISTORY -->
-    <!-- 14. Цель HISTORY (Бронебойная версия) -->
-    <target name="history" description="Откат до рабочей версии">
-        <!-- 1. Пробуем скомпилировать -->
+    <target name="history">
         <exec executable="ant.bat" resultproperty="res">
             <arg value="compile"/>
         </exec>
@@ -231,23 +228,17 @@
             <equals arg1="${res}" arg2="0"/>
         </condition>
 
-        <!-- 2. Если всё ок - финиш -->
-        <antcall target="-history-win"/>
-        <!-- 3. Если нет - откат -->
         <antcall target="-history-retry"/>
     </target>
 
-    <target name="-history-win" if="is.ok">
-        <echo message="ПОБЕДА! Рабочая версия найдена."/>
-    </target>
+
 
     <target name="-history-retry" unless="is.ok">
-        <echo message="Код сломан. Откатываемся..."/>
+        <echo message="откат"/>
         <exec executable="git" failonerror="true">
             <arg value="checkout"/>
             <arg value="HEAD~1"/>
         </exec>
-        <!-- ВНИМАНИЕ: вызываем саму цель history, она точно есть в старых файлах -->
         <antcall target="history"/>
     </target>
 </project>
