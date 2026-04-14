@@ -223,7 +223,6 @@
     <target name="history" description="Автоматический поиск стабильного коммита">
         <mkdir dir="build"/>
         <exec executable="powershell" failonerror="true">
-            <arg value="-NoProfile"/>
             <arg value="-Command"/>
             <arg value="&amp; { "/>
             <arg value="  $start = git rev-parse HEAD; "/>
@@ -232,7 +231,6 @@
             <arg value="    ant.bat compile; "/>
 
             <arg value="    if ($LASTEXITCODE -eq 0) { "/>
-            <arg value="       git diff $start HEAD > build/history_diff.txt; "/>
             <arg value="       break; "/>
             <arg value="    } "/>
 
