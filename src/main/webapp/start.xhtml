@@ -7,20 +7,20 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
-    <title>Стартовая страница</title>
+    <title>#{msg['start.title']}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<!--    <link rel="stylesheet" href="#{request.contextPath}/stylestart.css"/>-->
     <h:outputStylesheet library="css" name="stylestart.css"/>
 
 </h:head>
 
 <h:body>
+    <f:loadBundle basename="messages" var="msg"/>
     <div class="container">
         <table class="main-container">
             <tr>
                 <td colspan="2">
                     <div class="header">
-                        Кутузова Софья, P3210, Вариант 466441
+                        #{msg['app.header']}
                     </div>
                 </td>
             </tr>
@@ -39,19 +39,19 @@
 
         <div class="container">
             <ul id="days">
-                <li class="monday">Mon</li>
-                <li class="tuesday">Tues</li>
-                <li class="wednesday">Wed</li>
-                <li class="thursday">Thurs</li>
-                <li class="friday">Fri</li>
-                <li class="saturday">Sat</li>
-                <li class="sunday">Sun</li>
+                <li class="monday">#{msg['day.mon']}</li>
+                <li class="tuesday">#{msg['day.tue']}</li>
+                <li class="wednesday">#{msg['day.wed']}</li>
+                <li class="thursday">#{msg['day.thu']}</li>
+                <li class="friday">#{msg['day.fri']}</li>
+                <li class="saturday">#{msg['day.sat']}</li>
+                <li class="sunday">#{msg['day.sun']}</li>
             </ul>
         </div>
 
 <!--        <a href="main.xhtml" class="nav-link">Начать </a>-->
             <h:form>
-                <h:commandLink value="Начать" action="main" styleClass="nav-link">
+                <h:commandLink value="#{msg['start.button']}" action="main" styleClass="nav-link">
                     <f:ajax disabled="true"/>
                 </h:commandLink>
             </h:form>
@@ -59,7 +59,6 @@
 
     </div>
 
-<!--    <script src="#{request.contextPath}/scriptstart.js"></script>-->
     <h:outputScript library="js" name="scriptstart.js"/>
 
 </h:body>

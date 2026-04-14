@@ -2,7 +2,6 @@
 <project name="Lab3" default="compile" basedir=".">
     <property file="build.properties"/>
 
-    <!-- Определяем, где лежат библиотеки -->
     <path id="classpath.lib">
         <fileset dir="lib">
             <include name="*.jar"/>
@@ -20,32 +19,36 @@
                destdir="${classes.dir}"
                includeantruntime="false"
                encoding="UTF-8">
-            <!-- Подключаем наши библиотеки к компилятору -->
             <classpath refid="classpath.lib"/>
         </javac>
 
-        <!-- Копируем ресурсы (persistence.xml и другие настройки) -->
+        <!-- ресурсы в ту же папку с итоговыми классами-->
         <copy todir="${classes.dir}">
-            <fileset dir="${resources.dir}" erroronmissingdir="false"/>
+            <fileset dir="${resources.dir}"/>
         </copy>
     </target>
-    <!-- 2. Цель BUILD: упаковка в JAR -->
-    <target name="build" depends="compile" description="Компиляция и упаковка в JAR">
-        <!-- Создаем папку для готового архива, если её нет -->
+
+    <!-- упаковка в жар -->
+    <target name="build" depends="compile">
         <mkdir dir="${dist.dir}"/>
 
         <jar destfile="${dist.dir}/${jar.name}" basedir="${classes.dir}">
             <manifest>
                 <attribute name="Manifest-Version" value="${version}"/>
                 <attribute name="Main-Class" value="${main.class}"/>
-                <!-- Хорошим тоном считается добавить инфо, кто собрал -->
-                <attribute name="Created-By" value="Sonya"/>
             </manifest>
         </jar>
-        <echo message="Сборка архива завершена: ${dist.dir}/${jar.name}"/>
     </target>
 
-    <!-- Компиляция тестов -->
+
+
+
+
+
+
+
+
+
     <target name="compile-tests" depends="build">
         <mkdir dir="${test.build.dir}"/>
         <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" includeantruntime="false" encoding="UTF-8">
@@ -56,17 +59,17 @@
         </javac>
     </target>
 
-    <!-- 4. Цель TEST: запуск JUnit тестов -->
-    <target name="test" depends="compile-tests" description="Запуск тестов">
+    <target name="test" depends="compile-tests">
         <mkdir dir="${test.report.dir}"/>
-        <junit printsummary="yes" haltonfailure="no">
+        <!-- создаст переменную, если тесты упадут -->
+        <junit printsummary="yes" haltonfailure="no" failureproperty="tests.failed">
             <classpath>
                 <path refid="classpath.lib"/>
                 <pathelement location="${classes.dir}"/>
                 <pathelement location="${test.build.dir}"/>
             </classpath>
 
-            <!-- Формат отчета (нужен для пункта №10) -->
+            <!-- Формат отчета (10) -->
             <formatter type="xml"/>
 
             <batchtest fork="yes" todir="${test.report.dir}">
@@ -75,48 +78,64 @@
                 </fileset>
             </batchtest>
         </junit>
-        <echo message="Тесты завершены. Отчеты в ${test.report.dir}"/>
     </target>
 
-    <!-- 6. Цель XML: Валидация всех xml-файлов в проекте -->
-    <target name="xml" description="Валидация всех XML-файлов">
-        <xmlvalidate lenient="true">
-            <fileset dir="." includes="**/*.xml" excludes="build/**, target/**, .idea/**"/>
+
+
+
+
+
+
+    <!-- Валидация всех xml файлов -->
+    <target name="xml" >
+        <xmlvalidate lenient="true"> <!-- только структура и синтаксис-->
+            <fileset dir="." includes="**/*.xml" />
         </xmlvalidate>
-        <echo message="Все XML-файлы прошли валидацию."/>
     </target>
 
-    <!-- 5. Цель NATIVE2ASCII: Преобразование файлов локализации -->
-    <target name="native2ascii" description="Преобразование локализации">
+    <!-- Преобразование файлов локализации -->
+    <target name="n2a">
         <native2ascii src="${resources.dir}"
                       dest="${classes.dir}"
                       includes="**/*.properties"
                       encoding="UTF-8"/>
-        <echo message="Локализация обработана."/>
     </target>
 
-    <target name="report" depends="test" description="Отправка отчета в Git">
-        <!-- 1. Добавляем конкретную папку с отчетами -->
+
+    <target name="music" depends="build" >
+        <sound>
+            <success source="${music.file}"/>
+        </sound>
+    </target>
+
+
+
+
+
+
+
+
+    <target name="report" depends="test" unless="tests.failed">
         <exec executable="git" failonerror="true">
             <arg value="add"/>
             <arg value="${test.report.dir}"/>
         </exec>
 
-        <!-- 2. Делаем коммит.
-             Используем || exit 0, чтобы Ant не падал, если файлы не изменились -->
         <exec executable="git">
             <arg value="commit"/>
             <arg value="-m"/>
-            <arg value="Add junit test report [auto-generated]"/>
+            <arg value="junit test report"/>
         </exec>
 
-        <!-- 3. Отправляем на GitHub (необязательно по заданию, но нужно тебе) -->
         <exec executable="git">
             <arg value="push"/>
         </exec>
-
-        <echo message="Отчет сохранен локально и отправлен на GitHub (если настроен remote)."/>
     </target>
+
+
+
+
+
     <!-- 8. Цель DOC: Javadoc + контрольные суммы в манифест -->
     <target name="doc" depends="build" description="Генерация javadoc и хеш-сумм">
         <mkdir dir="${javadoc.dir}"/>
@@ -196,7 +215,7 @@
     </target>
 
     <!-- 7. Цель SCP: Отправка на сервер по SSH -->
-    <target name="scp" depends="build" description="Копирование на сервер">
+<!--    <target name="scp" depends="build" description="Копирование на сервер">
         <echo message="Отправка файла ${dist.dir}/${jar.name} на ${scp.host}..."/>
         <scp file="${dist.dir}/${jar.name}"
              todir="${scp.user}:${scp.password}@${scp.host}:${scp.dir}"
@@ -205,14 +224,9 @@
              failonerror="true"
              verbose="true"/>
         <echo message="Файл успешно доставлен!"/>
-    </target>
+    </target>-->
 
-    <target name="music" depends="build" description="Поиграть музыку при успехе">
-        <sound>
-            <success source="${music.file}"/>
-        </sound>
-        <echo message="Сборка завершена, музыка должна играть!"/>
-    </target>
+
     <!-- 14. Цель HISTORY -->
     <!-- 14. Цель HISTORY (Бронебойная версия) -->
     <target name="history" description="Откат до рабочей версии">
