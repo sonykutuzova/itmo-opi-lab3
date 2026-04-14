@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="DESKTOP-0MFE913" name="org.example.lab.PointTest" skipped="0" tests="1" time="0.136" timestamp="2026-04-14T13:17:50">
+<testsuite errors="0" failures="0" hostname="DESKTOP-0MFE913" name="org.example.lab.LogicTest" skipped="0" tests="2" time="0.152" timestamp="2026-04-14T13:17:49">
   <properties>
     <property name="ant.library.dir" value="C:\Users\Sonya\Documents\opi\apache-ant-1.10.16\lib" />
     <property name="ant.file.type" value="file" />
@@ -20,7 +20,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD" />
     <property name="user.country" value="RU" />
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-22\bin" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner org.example.lab.PointTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Users\Sonya\Documents\opi\lab3\test-reports\TEST-org.example.lab.PointTest.xml crashfile=C:\Users\Sonya\Documents\opi\lab3\junitvmwatcher13739808118205922671.properties propsfile=C:\Users\Sonya\Documents\opi\lab3\junit1693430267744461892.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner org.example.lab.LogicTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Users\Sonya\Documents\opi\lab3\test-reports\TEST-org.example.lab.LogicTest.xml crashfile=C:\Users\Sonya\Documents\opi\lab3\junitvmwatcher6312413266024259097.properties propsfile=C:\Users\Sonya\Documents\opi\lab3\junit12776958202018491832.properties" />
     <property name="jdk.debug" value="release" />
     <property name="main.class" value="org.example.Main" />
     <property name="alt.src.dir" value="build/alt-src" />
@@ -83,7 +83,8 @@
     <property name="src.dir" value="src/main/java" />
     <property name="ant.project.default-target" value="compile" />
   </properties>
-  <testcase classname="org.example.lab.PointTest" name="testPointCreation" time="0.006" />
+  <testcase classname="org.example.lab.LogicTest" name="testHitLogic" time="0.008" />
+  <testcase classname="org.example.lab.LogicTest" name="testInvalidRadius" time="0.001" />
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
