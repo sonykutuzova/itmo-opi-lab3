@@ -220,38 +220,25 @@
 
 
 
-    <!-- 14. Цель HISTORY: Линейный откат до рабочей версии -->
     <target name="history" description="Автоматический поиск стабильного коммита">
         <mkdir dir="build"/>
-        <echo message="Запуск процесса восстановления..."/>
-
         <exec executable="powershell" failonerror="true">
             <arg value="-NoProfile"/>
             <arg value="-Command"/>
-            <!-- Мы разбиваем скрипт на строки. Ant их склеит, а нам удобно читать -->
             <arg value="&amp; { "/>
             <arg value="  $start = git rev-parse HEAD; "/>
             <arg value="  while ($true) { "/>
-            <arg value="    Write-Host '--- Checking commit:' (git rev-parse --short HEAD) '---'; "/>
 
-            <!-- Пытаемся скомпилировать -->
             <arg value="    ant.bat compile; "/>
 
-            <!-- Проверяем результат компиляции -->
             <arg value="    if ($LASTEXITCODE -eq 0) { "/>
-            <arg value="       Write-Host '✅ SUCCESS! Stable version found.' -ForegroundColor Green; "/>
             <arg value="       git diff $start HEAD > build/history_diff.txt; "/>
-            <arg value="       Write-Host 'Report saved to build/history_diff.txt'; "/>
             <arg value="       break; "/>
             <arg value="    } "/>
 
-            <!-- Если ошибка - откатываемся -->
-            <arg value="    Write-Host '❌ FAILED. Rolling back one step...' -ForegroundColor Yellow; "/>
             <arg value="    git checkout -f HEAD~1; "/>
 
-            <!-- Проверка на конец истории -->
             <arg value="    if ($LASTEXITCODE -ne 0) { "/>
-            <arg value="       Write-Host '🛑 Reached start of history.' -ForegroundColor Red; "/>
             <arg value="       break; "/>
             <arg value="    } "/>
             <arg value="  } "/>
