@@ -29,7 +29,7 @@ public class ResultsBean implements Serializable {
 
     public String formatTime(Date timestamp) {
         if (timestamp == null) return "";
-        return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(timestamp)
+        return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(timestamp);
     }
     public String formatExecutionTime(long executionTime) {
         return String.format("%.3f", executionTime / 1_000_000.0);
