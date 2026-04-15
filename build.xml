@@ -207,16 +207,24 @@
         </java>
     </target>
 
-<!--    <target name="scp" depends="build" description="Копирование на сервер">
-        <echo message="Отправка файла ${dist.dir}/${jar.name} на ${scp.host}..."/>
+
+
+
+
+
+
+
+
+
+    <target name="scp" depends="build">
         <scp file="${dist.dir}/${jar.name}"
              todir="${scp.user}:${scp.password}@${scp.host}:${scp.dir}"
              port="${scp.port}"
              trust="true"
-             failonerror="true"
-             verbose="true"/>
-        <echo message="Файл успешно доставлен!"/>
-    </target>-->
+             failonerror="true"/>
+             <!--verbose="true"/>-->
+
+    </target>
 
 
 
